@@ -3,6 +3,7 @@ import {
   LOG_IN_REQUEST,
   LOG_IN_SUCCESS,
 } from "../actions/user";
+import { produce } from "immer";
 
 const initialState = {
   data: null,
@@ -10,39 +11,31 @@ const initialState = {
 };
 
 const userReducer = (prevState = initialState, action) => {
-  switch (action.type) {
-    case LOG_IN_REQUEST:
-      return {
-        ...prevState,
-        isLogInLoad: true,
-        data: null,
-      };
-    case LOG_IN_SUCCESS:
-      return {
-        ...prevState,
-        data: action.data,
-        isLogInLoad: true,
-      };
-    case LOG_IN_FAILURE:
-      return {
-        ...prevState,
-        isLogInLoad: false,
-        data: null,
-      };
-    case "LOG_IN":
-      return {
-        ...prevState,
-        data: action.data,
-      };
-    case "LOG_OUT":
-      return {
-        ...prevState,
-        isLogInLoad: false,
-        data: null,
-      };
-    default:
-      return prevState;
-  }
+  return produce(prevState, (draft) => {
+    switch (action.type) {
+      case LOG_IN_REQUEST:
+        draft.data = null;
+        draft.isLogInLoad = true;
+        break;
+      case LOG_IN_SUCCESS:
+        draft.data = action.data;
+        draft.isLogInLoad = true;
+        break;
+      case LOG_IN_FAILURE:
+        draft.data = null;
+        draft.isLogInLoad = false;
+        break;
+      case "LOG_IN":
+        draft.data = action.data;
+        break;
+      case "LOG_OUT":
+        draft.data = null;
+        draft.isLogInLoad = false;
+        break;
+      default:
+        return prevState;
+    }
+  });
 };
 
 export default userReducer;

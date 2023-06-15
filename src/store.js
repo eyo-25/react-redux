@@ -1,5 +1,6 @@
-import { applyMiddleware, createStore } from "redux";
+import { applyMiddleware, compose, createStore } from "redux";
 import rootReducer from "./reducer";
+import { composeWithDevTools } from "redux-devtools-extension";
 
 const initialState = {
   user: {
@@ -23,7 +24,10 @@ const thunkMiddleware = (store) => (dispatch) => (action) => {
   return dispatch(action);
 };
 
-const enhancer = applyMiddleware(firstMiddleware, thunkMiddleware);
+const enhancer =
+  process.env.NODE_ENV === "production"
+    ? compose(applyMiddleware(firstMiddleware, thunkMiddleware))
+    : composeWithDevTools(applyMiddleware(firstMiddleware, thunkMiddleware));
 
 const store = createStore(rootReducer, initialState, enhancer);
 

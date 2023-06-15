@@ -7,6 +7,7 @@ export const logIn = (data) => {
   return (dispatch, getState) => {
     dispatch(logInRequest(data));
     try {
+      // axios.post().then().catch()으로 나중에 대체
       setTimeout(() => {
         dispatch(
           logInSucess({
