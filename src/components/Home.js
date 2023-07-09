@@ -1,17 +1,24 @@
 import { useDispatch, useSelector } from "react-redux";
 import { addPost } from "../actions/post";
-import { logIn, logOut } from "../actions/user";
+import { logIn } from "../actions/user";
 import { useCallback } from "react";
+import userSlice from "../reducer/user";
 
 export default function Home() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
 
   const onClick = useCallback(() => {
-    dispatch(logIn({ id: "eyo", password: "1234", admin: true }));
+    dispatch(logIn({ id: "eyo", password: "1234" }));
   }, [dispatch]);
 
-  console.log(user);
+  const logOut = useCallback(() => {
+    dispatch(userSlice.actions.logOut());
+  }, []);
+
+  const onClickHandler = useCallback(() => {
+    dispatch(addPost());
+  }, []);
 
   return (
     <>
@@ -27,17 +34,11 @@ export default function Home() {
         )}
       </div>
       {user.data ? (
-        <button onClick={() => dispatch(logOut())}>logout</button>
+        <button onClick={logOut}>logout</button>
       ) : (
         <button onClick={onClick}>login</button>
       )}
-      <button
-        onClick={() =>
-          dispatch(addPost({ userId: 1, id: 1, content: "하이 헬로우" }))
-        }
-      >
-        addpost
-      </button>
+      <button onClick={onClickHandler}>게시글 작성</button>
     </>
   );
 }

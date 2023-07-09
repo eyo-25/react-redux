@@ -1,19 +1,33 @@
-import { produce } from "immer";
+import { createSlice } from "@reduxjs/toolkit";
+import { addPost } from "../actions/post";
 
 const initialState = {
-  posts: [],
+  data: [],
 };
 
-const postReducer = (prevState = initialState, action) => {
-  return produce(prevState, (draft) => {
-    switch (action.type) {
-      case "ADD_POST":
-        draft.push(action.data);
-        break;
-      default:
-        return prevState;
-    }
-  });
-};
+const postSlice = createSlice({
+  name: "post",
+  initialState,
+  reducers: {
+    clearPosts(state, action) {
+      state.data = [];
+    },
+  },
+  extraReducers: (builder) =>
+    builder
+      .addCase(addPost.pending, (state, action) => {})
+      .addCase(addPost.fulfilled, (state, action) => {
+        state.data.push(action.payload);
+      })
+      .addCase(addPost.rejected, (state, action) => {})
+      .addMatcher(
+        (state, action) => {
+          return action.type.includes("/pending");
+        },
+        (state, action) => {
+          state.isLoding = true;
+        }
+      ),
+});
 
-export default postReducer;
+export default postSlice;

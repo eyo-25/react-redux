@@ -1,41 +1,35 @@
-import {
-  LOG_IN_FAILURE,
-  LOG_IN_REQUEST,
-  LOG_IN_SUCCESS,
-} from "../actions/user";
-import { produce } from "immer";
+import { logIn } from "../actions/user";
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   data: null,
   isLogInLoad: false,
 };
 
-const userReducer = (prevState = initialState, action) => {
-  return produce(prevState, (draft) => {
-    switch (action.type) {
-      case LOG_IN_REQUEST:
-        draft.data = null;
-        draft.isLogInLoad = true;
-        break;
-      case LOG_IN_SUCCESS:
-        draft.data = action.data;
-        draft.isLogInLoad = true;
-        break;
-      case LOG_IN_FAILURE:
-        draft.data = null;
-        draft.isLogInLoad = false;
-        break;
-      case "LOG_IN":
-        draft.data = action.data;
-        break;
-      case "LOG_OUT":
-        draft.data = null;
-        draft.isLogInLoad = false;
-        break;
-      default:
-        return prevState;
-    }
-  });
-};
+const userSlice = createSlice({
+  name: "user",
+  initialState,
+  reducers: {
+    logOut(state, action) {
+      state.data = null;
+    },
+  },
+  extraReducers: {
+    [logIn.pending](state, action) {
+      // user/logIn/pending
+      state.isLogInLoad = true;
+    },
+    [logIn.fulfilled](state, action) {
+      // user/logIn/fulfilled
+      state.data = action.payload;
+      state.isLogInLoad = false;
+    },
+    [logIn.rejected](state, action) {
+      // user/logIn/rejected
+      state.data = null;
+      state.isLogInLoad = false;
+    },
+  },
+});
 
-export default userReducer;
+export default userSlice;
